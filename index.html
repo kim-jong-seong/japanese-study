@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>일본어 문장 노트</title>
+<style>
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --text: #1f2328;
+    --muted: #7a7f88;
+    --line: #e8e6df;
+    --accent: #c2410c;
+    --accent-soft: #fff4ec;
+    --chip: #f1efe8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17171a; --surface: #202024; --text: #ececee; --muted: #9a9aa3;
+      --line: #2f2f36; --accent: #fb923c; --accent-soft: #2a1f17; --chip: #2a2a30;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17171a; --surface: #202024; --text: #ececee; --muted: #9a9aa3;
+    --line: #2f2f36; --accent: #fb923c; --accent-soft: #2a1f17; --chip: #2a2a30;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, "Hiragino Sans", "Noto Sans JP", "Apple SD Gothic Neo", sans-serif;
+    line-height: 1.8; font-size: 16px;
+  }
+  .jp-serif { font-family: "Hiragino Mincho ProN", "Noto Serif JP", serif; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 28px 16px 80px; }
+  header { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 20px; }
+  header h1 { margin: 0 auto 0 0; font-size: 20px; }
+  .tabs { display: flex; gap: 2px; background: var(--chip); padding: 3px; border-radius: 10px; }
+  .tab, .btn {
+    border: 0; background: transparent; color: var(--text); font: inherit; font-size: 14px;
+    padding: 6px 12px; border-radius: 8px; cursor: pointer;
+  }
+  .tab.on { background: var(--surface); box-shadow: 0 1px 2px rgba(0,0,0,.08); font-weight: 600; }
+  .btn { background: var(--chip); }
+  .btn.on { background: var(--accent); color: #fff; }
+  input[type=search] {
+    flex: 1 1 160px; min-width: 0; padding: 7px 12px; font: inherit; font-size: 14px;
+    border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text);
+  }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+  .tags:empty { display: none; }
+  .tag {
+    border: 1px solid var(--line); background: var(--surface); color: var(--muted);
+    font: inherit; font-size: 12px; padding: 2px 10px; border-radius: 999px; cursor: pointer;
+  }
+  .tag.on { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+    padding: 36px 36px 28px; margin-bottom: 32px;
+  }
+  .meta { display: flex; gap: 10px; align-items: baseline; font-size: 13px; color: var(--muted); }
+  .meta .date { font-weight: 600; color: var(--text); }
+
+  /* 문장 */
+  .ja { font-size: 32px; line-height: 2.1; margin: 20px 0 0; }
+  ruby rt { font-size: 11px; color: var(--accent); font-family: -apple-system, "Hiragino Sans", sans-serif; }
+  .hira { font-size: 15px; color: var(--muted); margin: 0; }
+  .sl { color: var(--muted); opacity: .55; font-weight: 400; }
+  .kr-line { font-size: 20px; font-weight: 700; color: var(--accent); margin: 8px 0 0; }
+  .mean { font-size: 20px; font-weight: 700; margin: 4px 0 0; }
+  .say { border: 0; background: var(--chip); color: var(--muted); font: inherit; font-size: 13px; line-height: 1;
+         padding: 6px 8px; border-radius: 8px; cursor: pointer; vertical-align: middle; }
+  .say:hover { background: var(--accent-soft); color: var(--accent); }
+  .say.on { background: var(--accent); color: #fff; }
+  .says { display: inline-flex; gap: 4px; margin-left: 12px; vertical-align: middle; }
+  .ja .says { position: relative; top: -4px; }
+  .ex .exja { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 0; }
+  .tk .jp { cursor: pointer; }
+  .tk .jp:hover { color: var(--accent); }
+  .blind .hideable:not(.shown) { filter: blur(7px); cursor: pointer; user-select: none; }
+
+  .sec { margin-top: 44px; }
+  .sec h3 { margin: 0 0 14px; font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
+
+  /* 단어별 분해 */
+  .tk { display: grid; grid-template-columns: 170px 150px 1fr; gap: 20px; align-items: baseline; padding: 11px 14px; border-top: 1px solid var(--line); }
+  .tk:first-child { border-top: 0; }
+  .tk.particle { background: var(--accent-soft); border-radius: 8px; border-top-color: transparent; }
+  .tk.particle + .tk { border-top-color: transparent; }
+  .tk .jp { font-size: 22px; line-height: 1.9; white-space: nowrap; }
+  .tk .jp small { font-size: 13px; color: var(--muted); margin-left: 8px; font-family: -apple-system, "Hiragino Sans", sans-serif; }
+  .tk .kr { font-size: 17px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+  .tk .mn { font-size: 16px; }
+
+  /* 문법 */
+  .gram { padding: 18px 0; border-top: 1px solid var(--line); font-size: 15.5px; }
+  .gram:first-of-type { border-top: 0; padding-top: 0; }
+  .gram .gt { display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; margin-bottom: 6px; }
+  .gram .gt b { font-size: 20px; color: var(--accent); }
+  .gram .gt span { font-size: 15px; font-weight: 600; }
+  .gram .gt small { font-size: 14px; color: var(--muted); font-weight: 400; }
+  .gram p { margin: 0; }
+  .gram .gt { margin-bottom: 14px; }
+  .grow { display: grid; grid-template-columns: 56px 1fr; gap: 14px; align-items: baseline; margin-top: 10px; }
+  .grow > .ex { margin-top: 0; }
+  .gl { font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+  .steps .step { line-height: 1.9; }
+  .steps .arrow { color: var(--muted); margin-right: 8px; }
+  .review.r2 { margin-top: 10px; padding-top: 0; border-top: 0; }
+  .review .gl { width: 56px; }
+
+  /* 예문 (문법 예, 비슷한 표현) */
+  .ex { margin-top: 12px; padding: 12px 16px; background: var(--chip); border-radius: 10px; line-height: 1.7; }
+  .ex .exja { font-size: 19px; }
+  .ex .exr { font-size: 13px; color: var(--muted); }
+  .ex .exk { font-size: 16px; font-weight: 700; color: var(--accent); }
+  .ex .exm { font-size: 15px; font-weight: 600; margin-top: 2px; }
+  .diff { margin: 6px 0 0 4px; font-size: 14px; color: var(--muted); }
+  .similar > .ex { margin-top: 0; background: var(--accent-soft); }
+  .similar .note { margin: 12px 0 0; font-size: 15px; }
+  .morehd { margin: 24px 0 0; font-size: 13px; color: var(--muted); }
+
+  /* 설명 안의 일본어: 일본어 + (한글 · 뜻) */
+  .jt b { font-weight: 700; }
+  .jt small { font-size: .85em; color: var(--muted); margin: 0 2px; }
+  .jt small i { font-style: normal; color: var(--accent); }
+
+  .review { display: flex; gap: 20px; margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+  .review label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
+
+  /* 단어 모음 */
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: baseline; }
+  th { color: var(--muted); font-weight: 500; font-size: 12px; }
+  td.jp { font-size: 19px; white-space: nowrap; }
+  td.kr { color: var(--accent); font-weight: 700; white-space: nowrap; }
+  td.mu { color: var(--muted); font-size: 13px; }
+  .table-scroll { overflow-x: auto; }
+  .empty { text-align: center; color: var(--muted); padding: 48px 0; }
+
+  @media (max-width: 720px) {
+    .card { padding: 24px 18px; }
+    .ja { font-size: 26px; }
+    .kr-line, .mean { font-size: 18px; }
+    .tk { grid-template-columns: auto 1fr; gap: 2px 14px; padding: 10px 8px; }
+    .tk .mn { grid-column: 1 / -1; }
+    .grow { grid-template-columns: 1fr; gap: 4px; }
+    .review { flex-wrap: wrap; gap: 8px 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>일본어 문장 노트</h1>
+    <div class="tabs" role="tablist">
+      <button class="tab on" data-view="sentences">문장</button>
+      <button class="tab" data-view="words">단어</button>
+    </div>
+    <input type="search" id="q" placeholder="검색">
+    <button class="btn" id="blindBtn" title="발음·뜻을 가리고 직접 맞혀 보기">가리기</button>
+    <button class="btn" id="themeBtn" title="테마 전환">◐</button>
+  </header>
+  <div class="tags" id="tags"></div>
+  <div id="out"></div>
+</div>
+
+<script src="data.js"></script>
+<script>
+(function () {
+  var data = (window.SENTENCES || []).slice().sort(function (a, b) {
+    return a.date === b.date ? (a.id < b.id ? 1 : -1) : (a.date < b.date ? 1 : -1);
+  });
+  var state = { view: "sentences", q: "", tag: "", blind: false };
+
+  function store(k, v) {
+    try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; }
+  }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  // {{일본어|히라가나|한글|뜻}} → 일본어 (한글 · 뜻)   ※ 설명 안에서는 히라가나를 생략해 간결하게
+  function rich(s) {
+    return esc(s).replace(/\{\{([^|}]*)\|([^|}]*)\|([^|}]*)\|([^}]*)\}\}/g, function (_, j, r, k, m) {
+      return '<span class="jt"><b class="jp-serif">' + j + '</b><small>(<i>' + k + '</i> · ' + m + ')</small></span>';
+    });
+  }
+  // 음성: 브라우저 내장 TTS. 일본어 음성(Kyoko, Google 日本語 등)을 고른다.
+  var synth = window.speechSynthesis, jaVoice = null;
+  function pickVoice() {
+    if (!synth) return;
+    var vs = synth.getVoices().filter(function (v) { return /^ja/i.test(v.lang); });
+    jaVoice = vs.filter(function (v) { return /Kyoko|Google/.test(v.name); })[0] || vs[0] || null;
+  }
+  if (synth) { pickVoice(); synth.onvoiceschanged = pickVoice; }
+  function speak(text) {
+    if (!synth) return;
+    synth.cancel();
+    var u = new SpeechSynthesisUtterance(String(text).replace(/\s+/g, ""));
+    u.lang = "ja-JP"; if (jaVoice) u.voice = jaVoice;
+    u.rate = 0.9;
+    synth.speak(u);
+  }
+  // 재생: audio/<key>.m4a (VOICEVOX로 미리 생성) → 없으면 시스템 TTS
+  var player = new Audio(), fallbackText = "";
+  player.addEventListener("error", function () { if (fallbackText) speak(fallbackText); });
+  function play(key, text) {
+    if (synth) synth.cancel();
+    if (!key) { speak(text); return; }
+    fallbackText = text;
+    player.src = "audio/" + key + ".m4a";
+    player.play().catch(function () { speak(text); });
+  }
+  function sayBtns(text, key) {
+    return '<span class="says"><button class="say" data-say="' + esc(text) + '" data-key="' + esc(key || "") + '" title="듣기">🔊</button></span>';
+  }
+
+  var kanji = /[一-鿿々]/;
+  function furi(tok) {
+    if (tok.p) return esc(tok.t);
+    if (tok.f) return esc(tok.f).replace(/([一-鿿々]+)\[([^\]]+)\]/g, "<ruby>$1<rt>$2</rt></ruby>");
+    if (kanji.test(tok.t) && tok.r) return "<ruby>" + esc(tok.t) + "<rt>" + esc(tok.r) + "</rt></ruby>";
+    return esc(tok.t);
+  }
+  function haystack(s) {
+    return [s.request, s.ko, s.meaning, JSON.stringify(s.similar || ""), (s.tags || []).join(" ")]
+      .concat((s.tokens || []).map(function (t) { return [t.t, t.r, t.k, t.m, t.pos].join(" "); }))
+      .concat((s.grammar || []).map(function (g) { return g.title + " " + g.note; }))
+      .join(" ").toLowerCase();
+  }
+  function filtered() {
+    var q = state.q.trim().toLowerCase();
+    return data.filter(function (s) {
+      if (state.tag && (s.tags || []).indexOf(state.tag) < 0) return false;
+      return !q || haystack(s).indexOf(q) >= 0;
+    });
+  }
+
+  function renderTags() {
+    var set = {};
+    data.forEach(function (s) { (s.tags || []).forEach(function (t) { set[t] = 1; }); });
+    document.getElementById("tags").innerHTML = Object.keys(set).map(function (n) {
+      return '<button class="tag' + (state.tag === n ? " on" : "") + '" data-tag="' + esc(n) + '">#' + esc(n) + "</button>";
+    }).join("");
+  }
+
+  // 띄어쓰기로 끊어 둔 문자열을 " / "로 표시
+  function seg(s, bySlash) {
+    var parts = String(s || "").trim().split(bySlash ? /\s*\/\s*/ : /\s+/);
+    return parts.map(esc).join('<span class="sl"> / </span>');
+  }
+  function exBlock(e, key) {
+    return '<div class="ex"><div class="exja jp-serif"><span>' + seg(e.ja) + "</span>" + sayBtns(e.ja, key) + "</div>" +
+      (e.r ? '<div class="exr">' + seg(e.r) + "</div>" : "") +
+      '<div class="exk">' + seg(e.k, true) + "</div>" +
+      (e.m ? '<div class="exm hideable">' + esc(e.m) + "</div>" : "") + "</div>";
+  }
+
+  function card(s) {
+    var toks = s.tokens || [];
+    var words = toks.filter(function (t) { return !t.p; }).map(function (t, i) {
+      var particle = /조사/.test(t.pos || "");
+      return '<div class="tk' + (particle ? " particle" : "") + '">' +
+        '<div class="jp jp-serif" data-say="' + esc(t.t) + '" data-key="' + esc(s.id) + '-w' + (i + 1) + '" title="듣기">' + furi(t) + (kanji.test(t.t) ? "<small>" + esc(t.r) + "</small>" : "") + "</div>" +
+        '<div class="kr">' + esc(t.k) + "</div>" +
+        '<div class="mn hideable">' + esc(t.m) + "</div></div>";
+    }).join("");
+    var gram = (s.grammar || []).map(function (g, gi) {
+      var notes = Array.isArray(g.note) ? g.note : (g.note ? [g.note] : []);
+      return '<div class="gram"><div class="gt"><b class="jp-serif">' + esc(g.title) + "</b>" +
+        (g.k ? "<span>" + esc(g.k) + "</span>" : "") +
+        (g.m ? "<small>" + esc(g.m) + "</small>" : "") + "</div>" +
+        (g.form ? '<div class="grow"><span class="gl">공식</span><div>' + rich(g.form) + "</div></div>" : "") +
+        (g.steps && g.steps.length ? '<div class="grow"><span class="gl">만들기</span><div class="steps">' +
+          g.steps.map(function (st, i) { return '<div class="step">' + (i ? '<span class="arrow">→</span>' : "") + rich(st) + "</div>"; }).join("") + "</div></div>" : "") +
+        (notes.length ? '<div class="grow"><span class="gl">쓸 때</span><div>' + notes.map(function (n) { return "<p>" + rich(n) + "</p>"; }).join("") + "</div></div>" : "") +
+        (g.ex ? '<div class="grow"><span class="gl">예문</span>' + exBlock(g.ex, s.id + "-g" + (gi + 1)) + "</div>" : "") + "</div>";
+    }).join("");
+    var sim = "";
+    if (s.similar && typeof s.similar === "object") {
+      sim = '<div class="similar">' + exBlock(s.similar, s.id + "-s") + 
+        (s.similar.note ? '<p class="note">' + rich(s.similar.note) + "</p>" : "") +
+        (s.similar.more && s.similar.more.length ? '<p class="morehd">단어를 바꿔 보면</p>' + s.similar.more.map(function (e, mi) {
+          return exBlock(e, s.id + "-s" + (mi + 1)) + (e.diff ? '<p class="diff">' + rich(e.diff) + "</p>" : "");
+        }).join("") : "") + "</div>";
+    } else if (s.similar) {
+      sim = '<div class="similar"><p class="note">' + esc(s.similar) + "</p></div>";
+    }
+    var hira = toks.map(function (t) { return t.p ? t.t : (t.r || t.t); }).join(" ").replace(/ ([、。！？])/g, "$1");
+    // 한글 발음: 끊어 읽는 덩어리(b 표시) 단위로 " / ", 조사는 앞 단어에 붙임
+    var groups = [], cur = "", pend = false;
+    toks.forEach(function (t) {
+      if (t.p) { cur += t.t; return; }
+      if (pend) { groups.push(cur); cur = ""; pend = false; }
+      var particle = /조사/.test(t.pos || "");
+      cur += (cur && !particle ? " " : "") + (t.k || "");
+      if (t.b) pend = true;
+    });
+    if (cur) groups.push(cur);
+    var kr = groups.join(" / ");
+    var w1 = store("jp-" + s.id + "-w1") === "1", m1 = store("jp-" + s.id + "-m1") === "1";
+    return '<article class="card" data-id="' + esc(s.id) + '">' +
+      '<div class="meta"><span class="date">' + esc(s.date) + "</span>" +
+      (s.tags || []).map(function (t) { return "<span>#" + esc(t) + "</span>"; }).join("") + "</div>" +
+      '<p class="ja jp-serif">' + toks.map(furi).join("") + sayBtns(toks.map(function (t) { return t.t; }).join(""), s.id) + "</p>" +
+      '<p class="hira">' + seg(hira) + "</p>" +
+      '<p class="kr-line hideable">' + seg(kr, true) + "</p>" +
+      '<p class="mean hideable">' + esc(s.meaning) + "</p>" +
+      '<div class="sec"><h3>단어</h3>' + words + "</div>" +
+      (gram ? '<div class="sec"><h3>문법</h3>' + gram + "</div>" : "") +
+      (sim ? '<div class="sec"><h3>비슷한 표현</h3>' + sim + "</div>" : "") +
+      '<div class="review"><span class="gl">진도</span>' +
+      [["d1", "1일차 · 문장"], ["d2", "2일차 · 문법"], ["d3", "3일차 · 바꿔 말하기"]].map(function (d) {
+        var on = store("jp-" + s.id + "-" + d[0]) === "1";
+        return '<label><input type="checkbox" data-k="' + d[0] + '"' + (on ? " checked" : "") + "> " + d[1] + "</label>";
+      }).join("") + "</div>" +
+      '<div class="review r2"><span class="gl">복습</span>' +
+      '<label><input type="checkbox" data-k="w1"' + (w1 ? " checked" : "") + "> 1주 후</label>" +
+      '<label><input type="checkbox" data-k="m1"' + (m1 ? " checked" : "") + "> 1달 후</label></div>" +
+      "</article>";
+  }
+
+  function wordsView(list) {
+    var map = {};
+    list.forEach(function (s) {
+      (s.tokens || []).forEach(function (t) {
+        if (t.p) return;
+        var key = t.t + "|" + t.r;
+        if (!map[key]) map[key] = { tok: t, count: 0, date: s.date };
+        map[key].count++;
+        if (s.date < map[key].date) map[key].date = s.date;
+      });
+    });
+    var arr = Object.keys(map).map(function (k) { return map[k]; });
+    if (!arr.length) return '<div class="empty">표시할 단어가 없습니다.</div>';
+    arr.sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+    var rows = arr.map(function (w) {
+      return '<tr><td class="jp jp-serif">' + furi(w.tok) + '</td><td class="kr">' + esc(w.tok.k) + "</td><td class=\"mu\">" + esc(w.tok.r) +
+        '</td><td class="hideable">' + esc(w.tok.m) + '</td><td class="mu">' + esc(w.tok.pos) + '</td><td class="mu">' + esc(w.date) + "</td></tr>";
+    }).join("");
+    return '<div class="card"><div class="table-scroll"><table><thead><tr><th>일본어</th><th>한글</th><th>히라가나</th><th>뜻</th><th>역할</th><th>날짜</th></tr></thead><tbody>' + rows + "</tbody></table></div></div>";
+  }
+
+  function render() {
+    renderTags();
+    var list = filtered();
+    var out = document.getElementById("out");
+    document.body.classList.toggle("blind", state.blind);
+    if (state.view === "words") { out.innerHTML = wordsView(list); return; }
+    out.innerHTML = list.length ? list.map(card).join("") : '<div class="empty">표시할 문장이 없습니다.</div>';
+  }
+
+  document.querySelector(".tabs").addEventListener("click", function (e) {
+    var b = e.target.closest(".tab"); if (!b) return;
+    state.view = b.dataset.view;
+    document.querySelectorAll(".tab").forEach(function (x) { x.classList.toggle("on", x === b); });
+    render();
+  });
+  document.getElementById("q").addEventListener("input", function (e) { state.q = e.target.value; render(); });
+  document.getElementById("tags").addEventListener("click", function (e) {
+    var b = e.target.closest(".tag"); if (!b) return;
+    state.tag = state.tag === b.dataset.tag ? "" : b.dataset.tag;
+    render();
+  });
+  document.getElementById("blindBtn").addEventListener("click", function (e) {
+    state.blind = !state.blind;
+    e.currentTarget.classList.toggle("on", state.blind);
+    render();
+  });
+  document.getElementById("out").addEventListener("click", function (e) {
+    var sb = e.target.closest("[data-say]");
+    if (sb) {
+      play(sb.dataset.key, sb.dataset.say);
+      if (sb.classList.contains("say")) { sb.classList.add("on"); setTimeout(function () { sb.classList.remove("on"); }, 600); }
+      return;
+    }
+    var h = e.target.closest(".hideable");
+    if (h && state.blind) h.classList.toggle("shown");
+  });
+  document.getElementById("out").addEventListener("change", function (e) {
+    var cb = e.target; if (cb.type !== "checkbox") return;
+    store("jp-" + cb.closest(".card").dataset.id + "-" + cb.dataset.k, cb.checked ? "1" : "0");
+  });
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    var root = document.documentElement;
+    var dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    store("jp-theme", root.dataset.theme);
+  });
+  var saved = store("jp-theme"); if (saved) document.documentElement.dataset.theme = saved;
+
+  render();
+})();
+</script>
+</body>
+</html>
