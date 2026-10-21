@@ -84,14 +84,15 @@ def jobs(sentences):
     for s in sentences:
         sid = s["id"]
         toks = [t for t in s.get("tokens", []) if not t.get("p")]
-        yield sid, clean("".join(t["t"] for t in s.get("tokens", [])))
+        # say: 엔진이 한자를 잘못 읽을 때 쓰는 음성용 읽기 (예: 入れますか → はいれますか)
+        yield sid, clean("".join(t.get("say", t["t"]) for t in s.get("tokens", [])))
         for i, t in enumerate(toks, 1):
-            yield f"{sid}-w{i}", clean(t["t"])
+            yield f"{sid}-w{i}", clean(t.get("say", t["t"]))
         for i, g in enumerate(s.get("grammar", []), 1):
             if g.get("ex"):
-                yield f"{sid}-g{i}", clean(g["ex"]["ja"])
+                yield f"{sid}-g{i}", clean(g["ex"].get("say", g["ex"]["ja"]))
         if isinstance(s.get("variant"), dict):
-            yield f"{sid}-v", clean(s["variant"]["ja"])
+            yield f"{sid}-v", clean(s["variant"].get("say", s["variant"]["ja"]))
 
 
 def main():
