@@ -117,9 +117,8 @@
   .ex .exk { font-size: 16px; font-weight: 700; color: var(--accent); }
   .ex .exm { font-size: 15px; font-weight: 600; margin-top: 2px; }
   .diff { margin: 6px 0 0 4px; font-size: 14px; color: var(--muted); }
-  .similar > .ex { margin-top: 0; background: var(--accent-soft); }
-  .similar .note { margin: 12px 0 0; font-size: 15px; }
-  .morehd { margin: 24px 0 0; font-size: 13px; color: var(--muted); }
+  .variant > .ex { margin-top: 0; }
+  .variant .diff { margin-top: 10px; font-size: 14px; }
 
   /* 설명 안의 일본어: 일본어 + (한글 · 뜻) */
   .jt b { font-weight: 700; }
@@ -226,7 +225,7 @@
     return esc(tok.t);
   }
   function haystack(s) {
-    return [s.request, s.ko, s.meaning, JSON.stringify(s.similar || ""), (s.tags || []).join(" ")]
+    return [s.request, s.ko, s.meaning, JSON.stringify(s.variant || ""), (s.tags || []).join(" ")]
       .concat((s.tokens || []).map(function (t) { return [t.t, t.r, t.k, t.m, t.pos].join(" "); }))
       .concat((s.grammar || []).map(function (g) { return g.title + " " + g.note; }))
       .join(" ").toLowerCase();
@@ -279,16 +278,8 @@
         (notes.length ? '<div class="grow"><span class="gl">쓸 때</span><div>' + notes.map(function (n) { return "<p>" + rich(n) + "</p>"; }).join("") + "</div></div>" : "") +
         (g.ex ? '<div class="grow"><span class="gl">예문</span>' + exBlock(g.ex, s.id + "-g" + (gi + 1)) + "</div>" : "") + "</div>";
     }).join("");
-    var sim = "";
-    if (s.similar && typeof s.similar === "object") {
-      sim = '<div class="similar">' + exBlock(s.similar, s.id + "-s") + 
-        (s.similar.note ? '<p class="note">' + rich(s.similar.note) + "</p>" : "") +
-        (s.similar.more && s.similar.more.length ? '<p class="morehd">단어를 바꿔 보면</p>' + s.similar.more.map(function (e, mi) {
-          return exBlock(e, s.id + "-s" + (mi + 1)) + (e.diff ? '<p class="diff">' + rich(e.diff) + "</p>" : "");
-        }).join("") : "") + "</div>";
-    } else if (s.similar) {
-      sim = '<div class="similar"><p class="note">' + esc(s.similar) + "</p></div>";
-    }
+    var vr = s.variant ? '<div class="variant">' + exBlock(s.variant, s.id + "-v") +
+      (s.variant.diff ? '<p class="diff">' + rich(s.variant.diff) + "</p>" : "") + "</div>" : "";
     var hira = toks.map(function (t) { return t.p ? t.t : (t.r || t.t); }).join(" ").replace(/ ([、。！？])/g, "$1");
     // 한글 발음: 끊어 읽는 덩어리(b 표시) 단위로 " / ", 조사는 앞 단어에 붙임
     var groups = [], cur = "", pend = false;
@@ -311,7 +302,7 @@
       '<p class="mean hideable">' + esc(s.meaning) + "</p>" +
       '<div class="sec"><h3>단어</h3>' + words + "</div>" +
       (gram ? '<div class="sec"><h3>문법</h3>' + gram + "</div>" : "") +
-      (sim ? '<div class="sec"><h3>비슷한 표현</h3>' + sim + "</div>" : "") +
+      (vr ? '<div class="sec"><h3>단어를 바꿔 보면</h3>' + vr + "</div>" : "") +
       '<div class="review"><span class="gl">진도</span>' +
       [["d1", "1일차 · 문장"], ["d2", "2일차 · 문법"], ["d3", "3일차 · 바꿔 말하기"]].map(function (d) {
         var on = store("jp-" + s.id + "-" + d[0]) === "1";

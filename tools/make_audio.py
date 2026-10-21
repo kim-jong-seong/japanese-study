@@ -13,8 +13,7 @@
   {id}.m4a          메인 문장
   {id}-w{n}.m4a     n번째 단어 (구두점 제외, 1부터)
   {id}-g{n}.m4a     n번째 문법 예문
-  {id}-s.m4a        비슷한 표현
-  {id}-s{n}.m4a     단어 바꾸기 예문 n
+  {id}-v.m4a        단어 바꾸기 예문
 """
 import argparse, json, os, subprocess, sys, time, urllib.parse, urllib.request
 
@@ -91,11 +90,8 @@ def jobs(sentences):
         for i, g in enumerate(s.get("grammar", []), 1):
             if g.get("ex"):
                 yield f"{sid}-g{i}", clean(g["ex"]["ja"])
-        sim = s.get("similar")
-        if isinstance(sim, dict):
-            yield f"{sid}-s", clean(sim["ja"])
-            for i, m in enumerate(sim.get("more", []), 1):
-                yield f"{sid}-s{i}", clean(m["ja"])
+        if isinstance(s.get("variant"), dict):
+            yield f"{sid}-v", clean(s["variant"]["ja"])
 
 
 def main():
