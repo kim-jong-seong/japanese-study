@@ -304,7 +304,7 @@
       (gram ? '<div class="sec"><h3>문법</h3>' + gram + "</div>" : "") +
       (vr ? '<div class="sec"><h3>단어를 바꿔 보면</h3>' + vr + "</div>" : "") +
       '<div class="review"><span class="gl">진도</span>' +
-      [["d1", "1일차 · 문장"], ["d2", "2일차 · 문법"], ["d3", "3일차 · 바꿔 말하기"]].map(function (d) {
+      [["d1", "1일차 · 문장"], ["d2", "2일차 · 단어·문법"], ["d3", "3일차 · 바꿔 말하기"], ["d4", "4일차 · 안 보고 말하기"]].map(function (d) {
         var on = store("jp-" + s.id + "-" + d[0]) === "1";
         return '<label><input type="checkbox" data-k="' + d[0] + '"' + (on ? " checked" : "") + "> " + d[1] + "</label>";
       }).join("") + "</div>" +
