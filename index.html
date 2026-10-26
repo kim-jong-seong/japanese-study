@@ -217,7 +217,7 @@
     return '<span class="says"><button class="say" data-say="' + esc(text) + '" data-key="' + esc(key || "") + '" title="듣기">🔊</button></span>';
   }
 
-  var kanji = /[一-鿿々]/;
+  var kanji = /[一-鿿々ァ-ヶー]/;
   function furi(tok) {
     if (tok.p) return esc(tok.t);
     if (tok.f) return esc(tok.f).replace(/([一-鿿々]+)\[([^\]]+)\]/g, "<ruby>$1<rt>$2</rt></ruby>");
